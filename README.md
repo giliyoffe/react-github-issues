@@ -1,2 +1,2 @@
 # github-issues
-An example of github issues with react.js
+An example of a github issues page with react.js
