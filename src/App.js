@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import "./App.css";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+// import SearchBar from "./components/searchBar";
 
 dayjs.extend(relativeTime);
 
@@ -22,55 +23,76 @@ const issueIcon = (
 );
 
 const IssueRow = ({
-  issue,
+  issue // ? why the comma? seems to work without?
 }) => {
-
   const userLoginName = issue.user.login;
   const createdTimeAgo = dayjs().to(dayjs(issue.created_at));
   const subtitle = `# ${issue.id} opened ${createdTimeAgo} by `;
 
   return (
-    <div className="issue-row">
-      <div className="issue-icon">
-        {issueIcon}
-      </div>
-      <div className="issue-text">
-        <div className="issue-title">
-          {issue.title}
-        </div>
-        <div className="issue-subtitle">
-          {subtitle}
-          <a href={userLoginName}>{/* todo change href destiantion */}
-            {userLoginName}
-          </a>
+    <div>
+      <div className="issue-row">
+        <div className="issue-icon">{issueIcon}</div>
+        <div className="issue-text">
+          <div className="issue-title">{issue.title}</div>
+          <div className="issue-subtitle">
+            {subtitle}
+            <a
+              href={`https://github.com/facebook/create-react-app/issues/created_by/${userLoginName}`}
+            >
+              {" "}
+              {/* todo change href destiantion */}
+              {userLoginName}
+            </a>
+          </div>
         </div>
       </div>
     </div>
   );
-}
+};
+
 class App extends Component {
+  // constructor() {
+  //   super();
+  //   this.state = {
+  //     search: 'Level Up'
+  //   };
+  // }
+  
   state = {
-    data: false
+    data: false,
+    search: "Search..."
   };
+
+  updateSearch(event) {
+    // console.log(event.target.value);
+    // const searchText = event.target.value;
+    this.setState({search : event.target.value});
+    console.log('event.target.value  : ',event.target.value);
+    console.log('this.state.search : ', this.state.search);
+
+  }
 
   componentDidMount() {
     fetch("https://api.github.com/repos/facebook/create-react-app/issues")
-      .then(function (response) {
+      .then(function(response) {
+        // console.log(response); //where is the data in the response that the json will use?
         return response.json();
       })
       .then(json => {
         this.setState({ data: json });
         console.log("parsed json", json);
       })
-      .catch(function (ex) {
+      .catch(function(ex) {
         console.log("parsing failed", ex);
       });
   }
 
   render() {
     const { data } = this.state;
+
     if (!data || !data.length) {
-      return <div className="loader">Loading...</div>; //todo loader svg
+      return <div className="loader">Loading...</div>; //todo loader svg now
     }
 
     return (
@@ -92,23 +114,30 @@ class App extends Component {
           </svg>
           GitHub
         </header>
+        <br />
+
+        <input 
+          type="text" 
+          value={this.state.search} 
+          onChange={this.updateSearch.bind(this)}
+        />
+
+        {/* <form> */}
+        <div>{/* <SearchBar /> */}</div>
+        <br />
+        <br />
         <div className="issues-table">
-          {data.map(issue => <IssueRow key={`${issue.id}_issue_row`} issue={issue} />)}
+          {data.map(issue => (
+            <IssueRow key={`${issue.id} _issue_row`} issue={issue} />
+          ))}
+          {/* // todo check why use key */}
         </div>
+        {/* </form> */}
       </div>
     );
   }
 }
 
 export default App;
-
-//  example : {/* <a
-//                   id="issue-id-5487"
-//                   class="link-gray-dark v-align-middle no-underline h4 js-navigation-open"
-//                   data-hovercard-type="pull_request"
-//                   data-hovercard-url="/facebook/create-react-app/pull/5487/hovercard"
-//                   href="/facebook/create-react-app/pull/5487"
-//                   aria-describedby="hovercard-aria-description"
-//                 >
-//                   Add allowESModules option to babel-preset-react-app
-//                 </a> */}
+//        {/* TODO : delete all br and do css */}
+// {/* continue from here form  or c tutorial for react         https://www.youtube.com/watch?v=OlVkYnVXPl0 */}
