@@ -22,9 +22,25 @@ const issueIcon = (
   </svg>
 );
 
-const IssueRow = ({
-  issue // ? why the comma? seems to work without?
-}) => {
+const Header = () => 
+    <header className="App-header">
+      <svg
+        height="32"
+        className="octicon"
+        viewBox="0 0 16 16"
+        version="1.1"
+        width="32"
+        aria-hidden="true"
+      >
+        <path
+          fillRule="evenodd"
+          d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+        />
+      </svg>
+      GitHub
+    </header>
+
+const IssueRow = ({ issue }) => {
   const userLoginName = issue.user.login;
   const createdTimeAgo = dayjs().to(dayjs(issue.created_at));
   const subtitle = `# ${issue.id} opened ${createdTimeAgo} by `;
@@ -52,31 +68,18 @@ const IssueRow = ({
 };
 
 class App extends Component {
-  // constructor() {
-  //   super();
-  //   this.state = {
-  //     search: 'Level Up'
-  //   };
-  // }
-  
   state = {
     data: false,
-    search: "Search..."
+    search: ""
   };
 
   updateSearch(event) {
-    // console.log(event.target.value);
-    // const searchText = event.target.value;
-    this.setState({search : event.target.value});
-    console.log('event.target.value  : ',event.target.value);
-    console.log('this.state.search : ', this.state.search);
-
+    this.setState({ search: event.target.value });
   }
 
   componentDidMount() {
     fetch("https://api.github.com/repos/facebook/create-react-app/issues")
       .then(function(response) {
-        // console.log(response); //where is the data in the response that the json will use?
         return response.json();
       })
       .then(json => {
@@ -95,49 +98,37 @@ class App extends Component {
       return <div className="loader">Loading...</div>; //todo loader svg now
     }
 
+    const filteredData = data.filter(issue => {
+      const lowerCaseTitle = issue.title.toLowerCase();
+      const lowerCaseUser = issue.user.login.toLowerCase();
+      const lowerCaseSearch = this.state.search.toLowerCase();
+      return (
+        lowerCaseTitle.includes(lowerCaseSearch) ||
+        lowerCaseUser.includes(lowerCaseSearch)
+      );
+      // return issue.title.toLowerCase().includes(this.state.search.toLowerCase()) || issue.user.login.includes(this.state.search.toLowerCase());
+    });
+
     return (
       <div className="App">
-        <header className="App-header">
-          {/* // TODO: export elements/tags eg svg / code split */}
-          <svg
-            height="32"
-            className="octicon"
-            viewBox="0 0 16 16"
-            version="1.1"
-            width="32"
-            aria-hidden="true"
-          >
-            <path
-              fillRule="evenodd"
-              d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"
-            />
-          </svg>
-          GitHub
-        </header>
-        <br />
-
-        <input 
-          type="text" 
-          value={this.state.search} 
+        <Header />
+        <input
+          type="text"
+          placeholder="Search"
+          autoFocus
+          value={this.state.search}
           onChange={this.updateSearch.bind(this)}
         />
 
-        {/* <form> */}
-        <div>{/* <SearchBar /> */}</div>
-        <br />
-        <br />
         <div className="issues-table">
-          {data.map(issue => (
+          {filteredData.map(issue => (
             <IssueRow key={`${issue.id} _issue_row`} issue={issue} />
           ))}
           {/* // todo check why use key */}
         </div>
-        {/* </form> */}
       </div>
     );
   }
 }
 
 export default App;
-//        {/* TODO : delete all br and do css */}
-// {/* continue from here form  or c tutorial for react         https://www.youtube.com/watch?v=OlVkYnVXPl0 */}
