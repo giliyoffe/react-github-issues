@@ -95,7 +95,7 @@ class App extends Component {
     const { data } = this.state;
 
     if (!data || !data.length) {
-      return <div className="loader">Loading...</div>; //todo loader svg now
+      return <div className="loader">Loading...</div>; //todo loader svg
     }
 
     const filteredData = data.filter(issue => {
