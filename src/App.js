@@ -67,6 +67,8 @@ const IssueRow = ({ issue }) => {
   );
 };
 
+// TODO: export elements above this line from external files
+
 class App extends Component {
   state = {
     data: false,
@@ -124,7 +126,6 @@ class App extends Component {
           {filteredData.map(issue => (
             <IssueRow key={`${issue.id} _issue_row`} issue={issue} />
           ))}
-          {/* // todo check why use key */}
         </div>
       </div>
     );
