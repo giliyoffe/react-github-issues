@@ -6,25 +6,12 @@ const inputTextTry1 = document.forms[0].input;
 inputTextTry1.addEventListener('keyup', function(e){
         const term = e.target.value.toLowerCase();
         console.log(term);
-        
-        // const books = list.getElementsByTagName('li');
-        // Array.from(books).forEach(function(book){
-        //     const title = book.firstElementChild.text.Content;
-        //     if (title.toLowerCase().indexOf(term) != -1) {
-        //         book.style.disply = 'block';
-        //     } else {
-        //         book.style.disply = 'none';
-        //     }
-        // })
     })﻿
 
 class searchBar extends Component {
     state = {
         searchText: "Write text for search here..." // maybe dont need state   :/  //from the input this.setState({ searchText: this.value })
     };
-
-
-
 
     filterSearch = (inputTxt) => {
         inputTxt=''
@@ -37,7 +24,7 @@ class searchBar extends Component {
     }
 
     render() {
-        const { searchText } = this.state; // why better than const searchText = this.state.searchText; ?
+        const { searchText } = this.state;
 
         if (!searchText || !searchText.length) {
             return <div className="loader">Searching...</div>;
